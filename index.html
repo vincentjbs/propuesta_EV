@@ -1558,18 +1558,17 @@ function collideRect(ax,ay,aw,ah, bx,by,bw,bh){
   return ax<bx+bw && ax+aw>bx && ay<by+bh && ay+ah>by;
 }
 
+let _deathTimer  = 0;   // frames desde muerte
+const DEATH_FRAMES = 100; // ~1.7s a 60fps
+
 function killPlayer(){
-  if(pDead) return;        // ya está muerto, ignorar
-  pDead = true;
-  pvx   = 0;
-  pvy   = -9;              // rebote hacia arriba
+  if(pDead) return;
+  pDead       = true;
+  _deathTimer = 0;
+  pvx         = 0;
+  pvy         = -9;
   Audio8bit.death();
   LevelMusic.fadeOut(200);
-  // Resetear después de 1.8s con setTimeout — sin depender del contador de frames
-  setTimeout(function(){
-    resetPlayer();
-    LevelMusic.fadeIn(600);
-  }, 1800);
 }
 
 function update(){
@@ -1577,10 +1576,15 @@ function update(){
 
   const PW=22, PH=42;
 
-  // ── Si está muerto: solo animar caída, nada más ──
+  // ── Si está muerto: animar caída y contar frames ──
   if(pDead){
     pvy += 0.45;
     py  += pvy;
+    _deathTimer++;
+    if(_deathTimer >= DEATH_FRAMES){
+      resetPlayer();
+      LevelMusic.fadeIn(600);
+    }
     return;
   }
 
@@ -2347,15 +2351,34 @@ function render(){
 //  LOOP
 // ──────────────────────────────────────────────
 
+let _loopRunning = false;
+let _loopRafId   = null;
+
 function loop(){
   update();
   render();
-  // El loop SIEMPRE continúa mientras se esté en juego o inicio
-  // (incluyendo cuando el jugador está muerto — pDead)
   if(gameState==='playing' || gameState==='start'){
-    requestAnimationFrame(loop);
+    _loopRafId = requestAnimationFrame(loop);
+  } else {
+    _loopRunning = false;
   }
 }
+
+function ensureLoop(){
+  if((gameState==='playing' || gameState==='start') && !_loopRunning){
+    _loopRunning = true;
+    _loopRafId   = requestAnimationFrame(loop);
+  }
+}
+
+// Reanudar loop cuando la pestaña/app vuelve al foco (crítico en móvil)
+document.addEventListener('visibilitychange', function(){
+  if(!document.hidden) ensureLoop();
+});
+window.addEventListener('focus', ensureLoop);
+window.addEventListener('pageshow', ensureLoop);
+// Touch en cualquier parte reactiva el loop si se congeló
+document.addEventListener('touchstart', ensureLoop, {passive:true});
 
 // ──────────────────────────────────────────────
 //  CONTROLES
@@ -2432,6 +2455,8 @@ addTouch('btnJ','ArrowUp');
 render();
 // Inicia galaxia de fondo
 StartScreen.init();
+_loopRunning = true;
+_loopRafId   = requestAnimationFrame(loop);
 
 // Título — personalizar
 document.getElementById('proposalText').innerHTML =
