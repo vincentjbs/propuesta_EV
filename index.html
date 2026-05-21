@@ -1429,6 +1429,8 @@ function startGame(){
 function resetPlayer(){
   px=60; py=280; pvx=0; pvy=0; onGround=false;
   pDead=false; pDeadTimer=0; camX=0;
+  // Asegurar que el loop siga corriendo (por si se cortó)
+  requestAnimationFrame(loop);
 }
 
 function showFloat(msg){
@@ -1571,12 +1573,14 @@ function update(){
       pvy=JUMP; onGround=false; Audio8bit.jump();
     }
   } else {
-    // animación muerte
+    // animación muerte — sigue cayendo con gravedad
     pvy += 0.4; pvx = 0;
-    py += pvy;
+    py  += pvy;
     pDeadTimer++;
-    if(pDeadTimer>90){ resetPlayer(); }
-    return;
+    if(pDeadTimer > 90){
+      resetPlayer();
+    }
+    return; // no procesar colisiones mientras muere
   }
 
   // Gravedad
@@ -1609,7 +1613,11 @@ function update(){
 
   // Límites
   if(px<0) px=0;
-  if(py>H+100){ pDead=true; pDeadTimer=0; Audio8bit.death(); }
+  // Caída al vacío — activar muerte si no está ya muerto
+  if(py > H+80 && !pDead){
+    pDead=true; pDeadTimer=0; pvy=-8;
+    Audio8bit.death();
+  }
 
   // Cámara
   const TARGET = W/3;
@@ -1658,7 +1666,7 @@ function update(){
       // jugador cae encima → mata al enemigo
       if(pvy>0 && py+PH < e.y+e.h-4){
         e.alive=false; pvy=-7; Audio8bit.stomp();
-      } else {
+      } else if(!pDead) {
         // jugador muere
         pDead=true; pDeadTimer=0; pvy=-9; Audio8bit.death();
       }
