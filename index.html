@@ -1405,7 +1405,6 @@ function startGame(){
   // Fade out música ambiental de intro y arrancar juego
   IntroAmbient.fadeOut(900, () => {});
   StartScreen.stop();
-  IntroMusic.stop();
   document.getElementById('startScreen').style.display='none';
   gameState='playing';
   // (música ambiental MP3 ya activa en pantalla de inicio, se hace fadeOut al iniciar)
@@ -2353,7 +2352,6 @@ document.addEventListener('keydown',e=>{
   if((e.key==='Enter'||e.key===' ') && gameState==='start'){
     Audio8bit.init(); // unlock AudioContext en el evento de usuario
     if(!_introStarted){
-      IntroMusic.play(Audio8bit._getCtx(), Audio8bit._getMaster());
       IntroAmbient.fadeIn(1500);
       _introStarted = true;
     } else {
@@ -2369,7 +2367,6 @@ document.getElementById('startScreen').addEventListener('click', ()=>{
   if(gameState==='start'){
     Audio8bit.init(); // unlock AudioContext en el evento de usuario
     if(!_introStarted){
-      IntroMusic.play(Audio8bit._getCtx(), Audio8bit._getMaster());
       IntroAmbient.fadeIn(1500);
       _introStarted = true;
     } else {
