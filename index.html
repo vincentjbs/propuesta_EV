@@ -323,234 +323,6 @@ const Audio8bit = (() => {
   }
 
   // ══════════════════════════════════════════════
-  //  BGM NIVEL — Estilo SNES/32-bit, 4 voces
-  //  Melodía + Armonía + Bajo + Percusión
-  // ══════════════════════════════════════════════
-  const N = {
-    C3:130.8, D3:146.8, E3:164.8, F3:174.6, G3:196,  A3:220,  B3:246.9,
-    C4:261.6, D4:293.7, E4:329.6, F4:349.2, G4:392,  A4:440,  B4:493.9,
-    C5:523.3, D5:587.3, E5:659.3, F5:698.5, G5:784,  A5:880,  B5:987.8,
-    C6:1046.5,D6:1174.7,E6:1318.5,F6:1397,
-    Bb3:233.1,Bb4:466.2,Bb5:932.3,
-    Fs4:370,  Fs5:740,
-    Gs4:415.3,Gs5:830.6,
-    As4:466.2,As5:932.3,
-    r:0
-  };
-
-  // BPM = 138  → beat = 60/138 = 0.4347s
-  // Usamos 16ths: s=0.1087, e=0.2174, q=0.4348, h=0.8696
-  const s=0.108, e=0.217, q=0.435, h=0.870, w=1.739;
-
-  // Melodía principal (voz 1 — square con vibrato)
-  const MEL = [
-    // compás 1-2
-    [N.E5,e],[N.r,s],[N.E5,s],[N.r,s],[N.C5,s],[N.E5,q],[N.G5,h],[N.r,q],[N.G4,h],[N.r,q],
-    // compás 3-4
-    [N.C5,q],[N.r,s],[N.G4,q],[N.r,s],[N.E4,q],[N.r,s],[N.A4,e],[N.B4,e],[N.Bb4,s],[N.A4,q],
-    // compás 5-6
-    [N.G4,e],[N.E5,e],[N.G5,e],[N.A5,q],[N.F5,e],[N.G5,s],[N.r,s],[N.E5,q],[N.r,s],[N.C5,e],[N.D5,e],[N.B4,q],[N.r,s],
-    // compás 7-8 (reexposición)
-    [N.E5,e],[N.r,s],[N.E5,s],[N.r,s],[N.C5,s],[N.E5,q],[N.G5,h],[N.r,q],[N.G4,h],[N.r,q],
-    // compás 9-10 (puente)
-    [N.G5,e],[N.Fs5,e],[N.F5,e],[N.D5,e*1.5],[N.E5,e],[N.r,s],[N.Gs4,e],[N.A4,e],[N.C5,e],[N.r,s],[N.A4,e],[N.C5,e],[N.D5,q],
-    // compás 11-12
-    [N.G5,e],[N.Fs5,e],[N.F5,e],[N.D5,e*1.5],[N.E5,e],[N.r,s],[N.C6,q],[N.r,s],[N.C6,e],[N.C6,q],[N.r,q],
-    // compás 13-14 (outro)
-    [N.C5,e],[N.r,s],[N.C5,s],[N.r,s],[N.C5,s],[N.F5,q],[N.r,s],[N.F5,e],[N.G5,e],[N.Gs5,e],[N.G5,e],[N.r,s],
-    [N.C5,e],[N.r,s],[N.C5,s],[N.r,s],[N.C5,s],[N.F5,q],[N.As5,q],[N.r,s],[N.As5,e],[N.A5,e],[N.Gs5,e],[N.G5,q],[N.r,s],
-  ];
-
-  // Armonía (voz 2 — triangle una 3ª abajo)
-  const HARM = [
-    [N.C5,e],[N.r,s],[N.C5,s],[N.r,s],[N.A4,s],[N.C5,q],[N.E5,h],[N.r,q],[N.E4,h],[N.r,q],
-    [N.A4,q],[N.r,s],[N.E4,q],[N.r,s],[N.C4,q],[N.r,s],[N.F4,e],[N.G4,e],[N.Fs4,s],[N.F4,q],
-    [N.E4,e],[N.C5,e],[N.E5,e],[N.F5,q],[N.D5,e],[N.E5,s],[N.r,s],[N.C5,q],[N.r,s],[N.A4,e],[N.B4,e],[N.G4,q],[N.r,s],
-    [N.C5,e],[N.r,s],[N.C5,s],[N.r,s],[N.A4,s],[N.C5,q],[N.E5,h],[N.r,q],[N.E4,h],[N.r,q],
-    [N.E5,e],[N.D5,e],[N.C5,e],[N.B4,e*1.5],[N.C5,e],[N.r,s],[N.E4,e],[N.F4,e],[N.A4,e],[N.r,s],[N.F4,e],[N.A4,e],[N.B4,q],
-    [N.E5,e],[N.D5,e],[N.C5,e],[N.B4,e*1.5],[N.C5,e],[N.r,s],[N.A5,q],[N.r,s],[N.A5,e],[N.A5,q],[N.r,q],
-    [N.A4,e],[N.r,s],[N.A4,s],[N.r,s],[N.A4,s],[N.D5,q],[N.r,s],[N.D5,e],[N.E5,e],[N.F5,e],[N.E5,e],[N.r,s],
-    [N.A4,e],[N.r,s],[N.A4,s],[N.r,s],[N.A4,s],[N.D5,q],[N.G5,q],[N.r,s],[N.G5,e],[N.F5,e],[N.E5,e],[N.D5,q],[N.r,s],
-  ];
-
-  // Línea de bajo (voz 3 — sine profundo)
-  const BASS_LINE = [
-    [N.C3,q],[N.C3,q],[N.G3,q],[N.G3,q],[N.C3,q],[N.C3,q],[N.G3,q],[N.G3,q],
-    [N.A3,q],[N.A3,q],[N.E3,q],[N.E3,q],[N.A3,q],[N.A3,q],[N.E3,q],[N.E3,q],
-    [N.F3,q],[N.F3,q],[N.C3,q],[N.C3,q],[N.G3,q],[N.G3,q],[N.D3,q],[N.D3,q],
-    [N.C3,q],[N.C3,q],[N.G3,q],[N.G3,q],[N.C3,q],[N.C3,q],[N.G3,q],[N.G3,q],
-    [N.C3,q],[N.B3,q],[N.A3,q],[N.Gs4,q],[N.A3,q],[N.A3,q],[N.E3,q],[N.E3,q],
-    [N.F3,q],[N.F3,q],[N.C3,q],[N.C3,q],[N.G3,q],[N.G3,q],[N.C3,q],[N.C3,q],
-    [N.F3,q],[N.F3,q],[N.C3,q],[N.C3,q],[N.G3,q],[N.G3,q],[N.C3,q],[N.C3,q],
-    [N.F3,q],[N.F3,q],[N.Bb3,q],[N.Bb3,q],[N.G3,q],[N.G3,q],[N.C3,q],[N.C3,q],
-  ];
-
-  // Percusión — kick(k), snare(sn), hihat(hh), r=silencio
-  // patrón de 1 compás x 16 pasos (16th notes)
-  const DRUM_PAT = ['k','r','hh','r','sn','r','hh','r','k','k','hh','r','sn','r','hh','r'];
-
-  function stopBGM() {
-    bgmRunning = false;
-    clearTimeout(bgmTimeout);
-    bgmTracks.forEach(n => { try { n.osc && n.osc.stop(); } catch(e){} });
-    bgmTracks = [];
-    bgmLoopFn = null;
-  }
-
-  // ── Reproduce un "chunk" de BGM de duración fija, luego loop ──
-  function playBGMChunk(melSeq, harmSeq, bassSeq, drumPat, chunkDur) {
-    if (!bgmRunning) return;
-    const now = ctx8.currentTime;
-    let t = 0;
-
-    // Melodía — square con ligero vibrato (detune oscilante)
-    melSeq.forEach(([f,d]) => {
-      if (f > 0) {
-        const n = makeOsc(f, 'square', 0.18, t, d*0.88, 0, 0.008, 0.04);
-        // segunda voz detuneada +7cents para "cordo 32-bit"
-        const n2= makeOsc(f, 'triangle', 0.08, t, d*0.88, 7, 0.008, 0.04);
-        if (n)  bgmTracks.push(n);
-        if (n2) bgmTracks.push(n2);
-      }
-      t += d;
-    });
-
-    // Armonía — triangle suave
-    t = 0;
-    harmSeq.forEach(([f,d]) => {
-      if (f > 0) {
-        const n = makeOsc(f, 'triangle', 0.10, t, d*0.85, -5, 0.01, 0.05);
-        if (n) bgmTracks.push(n);
-      }
-      t += d;
-    });
-
-    // Bajo — sine profundo
-    t = 0;
-    bassSeq.forEach(([f,d]) => {
-      if (f > 0) makeBass(f, 0.22, t, d*0.9);
-      t += d;
-    });
-
-    // Pad armónico — solo en notas largas de bajo para "colchón"
-    t = 0;
-    bassSeq.forEach(([f,d]) => {
-      if (f > 0 && d >= q) makePad(f*2, 0.04, t, d*0.8);
-      t += d;
-    });
-
-    // Percusión por steps
-    const stepT = s; // 16th note
-    for (let step=0; step<Math.floor(chunkDur/stepT); step++) {
-      const beat = DRUM_PAT[step % DRUM_PAT.length];
-      const dt   = step * stepT;
-      if (beat==='k') {
-        // Kick: sine con pitch bend rápido
-        if (!ctx8) continue;
-        const ok  = ctx8.createOscillator();
-        const gk  = ctx8.createGain();
-        ok.type = 'sine';
-        ok.frequency.setValueAtTime(160, ctx8.currentTime+dt);
-        ok.frequency.exponentialRampToValueAtTime(40, ctx8.currentTime+dt+0.08);
-        gk.gain.setValueAtTime(0.35, ctx8.currentTime+dt);
-        gk.gain.exponentialRampToValueAtTime(0.0001, ctx8.currentTime+dt+0.18);
-        ok.connect(gk); gk.connect(masterGain);
-        ok.start(ctx8.currentTime+dt); ok.stop(ctx8.currentTime+dt+0.2);
-        bgmTracks.push({osc:ok, gain:gk});
-      } else if (beat==='sn') {
-        // Snare: ruido + tono
-        makeNoise(0.14, dt, 0.10, 3500);
-        const os = makeOsc(220, 'square', 0.06, dt, 0.08, 0, 0.003, 0.04);
-        if (os) bgmTracks.push(os);
-      } else if (beat==='hh') {
-        makeNoise(0.04, dt, 0.04, 8000);
-      }
-    }
-
-    bgmTimeout = setTimeout(() => {
-      if (bgmRunning && bgmLoopFn) bgmLoopFn();
-    }, chunkDur * 1000);
-  }
-
-  function startBGMLevel() {
-    stopBGM();
-    bgmRunning = true;
-    const totalMel  = MEL.reduce((a,[,d])=>a+d, 0);
-    const totalBass = BASS_LINE.reduce((a,[,d])=>a+d, 0);
-    bgmLoopFn = () => playBGMChunk(MEL, HARM, BASS_LINE, DRUM_PAT, totalMel);
-    bgmLoopFn();
-  }
-
-  // ══════════════════════════════════════════════
-  //  BGM ROMANCE — Estilo balada 32-bit (intro + propuesta + sí)
-  //  Piano suave + pad + bajo lento
-  // ══════════════════════════════════════════════
-  const ROM_MEL = [
-    [N.C5,q],[N.E5,q],[N.G5,q],[N.E5,q],   [N.D5,q],[N.F5,q],[N.A5,q],[N.F5,q],
-    [N.E5,q],[N.G5,q],[N.B5,q],[N.G5,q],   [N.C5,h],[N.r,h],
-    [N.G4,q],[N.C5,q],[N.E5,q],[N.C5,q],   [N.A4,q],[N.C5,q],[N.E5,q],[N.C5,q],
-    [N.F4,q],[N.A4,q],[N.C5,q],[N.A4,q],   [N.G4,h],[N.r,h],
-    [N.E5,e],[N.D5,e],[N.C5,e],[N.D5,e],[N.E5,q],[N.r,s],
-    [N.E5,e],[N.D5,e],[N.C5,q],[N.r,e],
-    [N.A4,e],[N.B4,e],[N.C5,e],[N.B4,e],[N.A4,q],[N.r,s],
-    [N.G4,h],[N.r,q],
-  ];
-  const ROM_HARM = [
-    [N.E4,q],[N.G4,q],[N.C5,q],[N.G4,q],   [N.F4,q],[N.A4,q],[N.D5,q],[N.A4,q],
-    [N.G4,q],[N.B4,q],[N.E5,q],[N.B4,q],   [N.E4,h],[N.r,h],
-    [N.C4,q],[N.E4,q],[N.G4,q],[N.E4,q],   [N.C4,q],[N.E4,q],[N.G4,q],[N.E4,q],
-    [N.A3,q],[N.C4,q],[N.E4,q],[N.C4,q],   [N.B3,h],[N.r,h],
-    [N.C5,e],[N.B4,e],[N.A4,e],[N.B4,e],[N.C5,q],[N.r,s],
-    [N.C5,e],[N.B4,e],[N.A4,q],[N.r,e],
-    [N.F4,e],[N.G4,e],[N.A4,e],[N.G4,e],[N.F4,q],[N.r,s],
-    [N.E4,h],[N.r,q],
-  ];
-  const ROM_BASS = [
-    [N.C3,h],[N.G3,h], [N.D3,h],[N.A3,h],
-    [N.E3,h],[N.B3,h], [N.C3,w],
-    [N.C3,h],[N.G3,h], [N.A3,h],[N.E3,h],
-    [N.F3,h],[N.C3,h], [N.G3,w],
-    [N.C3,h],[N.G3,h], [N.C3,h],[N.G3,h],
-    [N.A3,h],[N.E3,h], [N.F3,h],[N.C3,h],
-  ];
-
-  function startBGMRomance() {
-    stopBGM();
-    bgmRunning = true;
-    const totalMel = ROM_MEL.reduce((a,[,d])=>a+d, 0);
-    bgmLoopFn = () => {
-      if (!bgmRunning) return;
-      let t=0;
-      ROM_MEL.forEach(([f,d])=>{
-        if(f>0){
-          // "piano": triangle corto + sine largo = sonido de piano sintético
-          const n1 = makeOsc(f,'triangle',0.22,t,d*0.9,0,0.004,0.08);
-          const n2 = makeOsc(f,'sine',0.10,t,d*0.95,0,0.002,0.15);
-          if(n1) bgmTracks.push(n1);
-          if(n2) bgmTracks.push(n2);
-        }
-        t+=d;
-      });
-      t=0;
-      ROM_HARM.forEach(([f,d])=>{
-        if(f>0){
-          const n = makeOsc(f,'sine',0.07,t,d*0.92,4,0.01,0.10);
-          if(n) bgmTracks.push(n);
-          makePad(f,0.03,t,d*0.88);
-        }
-        t+=d;
-      });
-      t=0;
-      ROM_BASS.forEach(([f,d])=>{
-        if(f>0) makeBass(f,0.18,t,d*0.85);
-        t+=d;
-      });
-      bgmTimeout = setTimeout(()=>{ if(bgmRunning && bgmLoopFn) bgmLoopFn(); }, totalMel*1000);
-    };
-    bgmLoopFn();
-  }
-
-  // ══════════════════════════════════════════════
   //  SFX
   // ══════════════════════════════════════════════
 
@@ -584,7 +356,7 @@ const Audio8bit = (() => {
         makeOsc(f,'square',0.28,t,d*0.9,0,0.005,0.04);
         return t+d;
       }, 0);
-    setTimeout(()=>{ if(gameState==='playing') startBGMLevel(); }, 1900);
+    // (sin BGM sintetizado — usa MP3 ambiental)
   }
 
   function sfxStar() {
@@ -666,7 +438,6 @@ const Audio8bit = (() => {
     });
     const total = FANFARE_MEL.reduce((a,[,d])=>a+d,0);
     setTimeout(()=>{
-      startBGMRomance();
       if(onDone) onDone();
     }, total*1000+250);
   }
@@ -695,7 +466,7 @@ const Audio8bit = (() => {
       t+=d;
     });
     const total = VIC_MEL.reduce((a,[,d])=>a+d,0);
-    setTimeout(()=> startBGMRomance(), total*1000+300);
+    // (sin BGM sintetizado)
   }
 
   // ══════════════════════════════════════════════
@@ -703,7 +474,7 @@ const Audio8bit = (() => {
   // ══════════════════════════════════════════════
   return {
     init,
-    startLevel()   { startBGMLevel(); },
+    startLevel()   { /* MP3 ambiental — sin BGM sintetizado */ },
     stopAll()      { stopBGM(); },
     coin()         { sfxCoin(); },
     jump()         { sfxJump(); },
@@ -1622,8 +1393,7 @@ function startGame(){
   IntroMusic.stop();
   document.getElementById('startScreen').style.display='none';
   gameState='playing';
-  // Pequeño delay para que el resume() del contexto tenga efecto antes de tocar
-  setTimeout(() => Audio8bit.startLevel(), 80);
+  // (música ambiental MP3 ya activa en pantalla de inicio, se hace fadeOut al iniciar)
   timerInterval = setInterval(()=>{
     if(gameState==='playing'){
       timer = Math.max(0,timer-1);
