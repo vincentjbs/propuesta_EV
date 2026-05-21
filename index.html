@@ -359,6 +359,21 @@ const Audio8bit = (() => {
     // (sin BGM sintetizado — usa MP3 ambiental)
   }
 
+  // ── Notas y duraciones (usadas por SFX, fanfarria y victoria) ──
+  const N = {
+    C3:130.8, D3:146.8, E3:164.8, F3:174.6, G3:196,   A3:220,   B3:246.9,
+    C4:261.6, D4:293.7, E4:329.6, F4:349.2, G4:392,   A4:440,   B4:493.9,
+    C5:523.3, D5:587.3, E5:659.3, F5:698.5, G5:784,   A5:880,   B5:987.8,
+    C6:1046.5,D6:1174.7,E6:1318.5,F6:1397,
+    Bb3:233.1,Bb4:466.2,Bb5:932.3,
+    Fs4:370,  Fs5:740,
+    Gs4:415.3,Gs5:830.6,
+    As4:466.2,As5:932.3,
+    r:0
+  };
+  // BPM ~138 — duraciones en segundos
+  const s=0.108, e=0.217, q=0.435, h=0.870, w=1.739;
+
   function sfxStar() {
     [N.G5,N.A5,N.B5,N.C6,N.E6].forEach((f,i)=>{
       makeOsc(f,'sine',0.32,i*0.07,0.14,0,0.005,0.06);
